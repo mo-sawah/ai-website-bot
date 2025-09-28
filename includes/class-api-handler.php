@@ -7,7 +7,7 @@ class AI_Website_Bot_API_Handler {
     
     private $openrouter_endpoint = 'https://openrouter.ai/api/v1/chat/completions';
     
-    public function process_chat_message($message) {
+    public function process_chat_message($message, $page_context = null) {
         $settings = AI_Website_Bot_Settings::get_all_settings();
         
         // Validate API key
@@ -28,7 +28,18 @@ class AI_Website_Bot_API_Handler {
             );
         }
         
-        // Handle special commands
+        // Handle page context commands first
+        if ($page_context && $page_context['type'] === 'article') {
+            $context_response = $this->handle_page_context_commands($message, $page_context, $settings);
+            if ($context_response) {
+                return array(
+                    'success' => true,
+                    'message' => $context_response
+                );
+            }
+        }
+        
+        // Handle special commands (existing functionality)
         $special_response = $this->handle_special_commands($message, $settings);
         if ($special_response) {
             return array(
@@ -37,8 +48,8 @@ class AI_Website_Bot_API_Handler {
             );
         }
         
-        // Prepare system prompt
-        $system_prompt = $this->build_system_prompt($settings);
+        // Prepare system prompt with page context
+        $system_prompt = $this->build_system_prompt($settings, $page_context);
         
         // Make API request
         $response = $this->make_openrouter_request($message, $system_prompt, $settings);
@@ -50,7 +61,185 @@ class AI_Website_Bot_API_Handler {
         
         return $response;
     }
+
+    // Add this new method to handle page context commands:
+    private function handle_page_context_commands($message, $page_context, $settings) {
+        $message_lower = strtolower(trim($message));
+        
+        // Commands that work with current article
+        $summary_triggers = array('summarize', 'summary', 'summarize this', 'summarize article', 'what is this about', 'tldr');
+        $content_triggers = array('what is this article about', 'tell me about this article', 'explain this article');
+        
+        foreach ($summary_triggers as $trigger) {
+            if (strpos($message_lower, $trigger) !== false) {
+                return $this->summarize_current_article($page_context);
+            }
+        }
+        
+        foreach ($content_triggers as $trigger) {
+            if (strpos($message_lower, $trigger) !== false) {
+                return $this->explain_current_article($page_context);
+            }
+        }
+        
+        // Key points extraction
+        if (strpos($message_lower, 'key points') !== false || strpos($message_lower, 'main points') !== false) {
+            return $this->extract_key_points($page_context);
+        }
+        
+        // Article details
+        if (strpos($message_lower, 'when was this published') !== false || strpos($message_lower, 'publication date') !== false) {
+            return "This article was published on " . date('F j, Y', strtotime($page_context['date'])) . " by " . $page_context['author'] . ".";
+        }
+        
+        // Related questions
+        if (strpos($message_lower, 'related') !== false || strpos($message_lower, 'similar') !== false) {
+            return $this->find_related_articles($page_context);
+        }
+        
+        return null; // No page context command matched
+    }
+
+    private function summarize_current_article($page_context) {
+        if (empty($page_context['content'])) {
+            return "I can see you're on an article page, but I'm unable to read the content to summarize it.";
+        }
+        
+        // Create a focused summary prompt
+        $content = substr($page_context['content'], 0, 2000); // Limit for API efficiency
+        
+        $summary_prompt = "Please provide a concise summary of this article in 2-3 paragraphs:\n\n";
+        $summary_prompt .= "Title: " . $page_context['title'] . "\n";
+        $summary_prompt .= "Content: " . $content . "\n\n";
+        $summary_prompt .= "Focus on the main points and key takeaways.";
+        
+        return $this->get_ai_response($summary_prompt);
+    }
+
+    private function explain_current_article($page_context) {
+        if (empty($page_context['content'])) {
+            return "I can see you're on an article page, but I'm unable to read the content to explain it.";
+        }
+        
+        $response = "**" . $page_context['title'] . "**\n\n";
+        $response .= "Published: " . date('M j, Y', strtotime($page_context['date'])) . " by " . $page_context['author'] . "\n\n";
+        
+        if (!empty($page_context['categories'])) {
+            $response .= "Categories: " . implode(', ', $page_context['categories']) . "\n\n";
+        }
+        
+        // Use excerpt or first part of content
+        if (!empty($page_context['excerpt'])) {
+            $response .= $page_context['excerpt'];
+        } else {
+            $response .= substr($page_context['content'], 0, 300) . "...";
+        }
+        
+        $response .= "\n\nWould you like me to summarize the full article or answer any specific questions about it?";
+        
+        return $response;
+    }
+
+    private function extract_key_points($page_context) {
+        if (empty($page_context['content'])) {
+            return "I can see you're on an article page, but I'm unable to read the content to extract key points.";
+        }
+        
+        $content = substr($page_context['content'], 0, 2000);
+        
+        $points_prompt = "Extract the key points from this article as a bullet list:\n\n";
+        $points_prompt .= "Title: " . $page_context['title'] . "\n";
+        $points_prompt .= "Content: " . $content . "\n\n";
+        $points_prompt .= "Please list 4-6 main points in bullet format.";
+        
+        return $this->get_ai_response($points_prompt);
+    }
+
+    private function find_related_articles($page_context) {
+        // Search for articles with similar categories or tags
+        $related_args = array(
+            'post_type' => 'post',
+            'post_status' => 'publish',
+            'posts_per_page' => 3,
+            'post__not_in' => array(get_the_ID()),
+            'meta_query' => array(
+                'relation' => 'OR'
+            )
+        );
+        
+        // Add category search if available
+        if (!empty($page_context['categories'])) {
+            $related_args['category_name'] = $page_context['categories'][0];
+        }
+        
+        $related_posts = get_posts($related_args);
+        
+        if (empty($related_posts)) {
+            return "I couldn't find any directly related articles, but you can browse our recent posts or search for specific topics.";
+        }
+        
+        $response = "Here are some related articles:\n\n";
+        
+        foreach ($related_posts as $index => $post) {
+            $response .= "**" . ($index + 1) . ". " . $post->post_title . "**\n";
+            $response .= "📅 " . date('M j, Y', strtotime($post->post_date)) . "\n";
+            $response .= "🔗 [Read Article](" . get_permalink($post->ID) . ")\n\n";
+        }
+        
+        return $response;
+    }
     
+    private function get_ai_response($prompt) {
+        $settings = AI_Website_Bot_Settings::get_all_settings();
+        
+        $headers = array(
+            'Authorization' => 'Bearer ' . $settings['openrouter_api_key'],
+            'Content-Type' => 'application/json',
+            'HTTP-Referer' => home_url(),
+            'X-Title' => get_bloginfo('name')
+        );
+        
+        $body = array(
+            'model' => $settings['ai_model'],
+            'messages' => array(
+                array(
+                    'role' => 'user',
+                    'content' => $prompt
+                )
+            ),
+            'temperature' => 0.7,
+            'max_tokens' => 300
+        );
+        
+        $args = array(
+            'headers' => $headers,
+            'body' => json_encode($body),
+            'timeout' => intval($settings['response_timeout']),
+            'method' => 'POST'
+        );
+        
+        $response = wp_remote_request('https://openrouter.ai/api/v1/chat/completions', $args);
+        
+        if (is_wp_error($response)) {
+            return "I'm having trouble processing your request right now. Please try again.";
+        }
+        
+        $response_code = wp_remote_retrieve_response_code($response);
+        $body_response = wp_remote_retrieve_body($response);
+        
+        if ($response_code !== 200) {
+            return "I'm having trouble processing your request right now. Please try again.";
+        }
+        
+        $data = json_decode($body_response, true);
+        
+        if (isset($data['choices'][0]['message']['content'])) {
+            return trim($data['choices'][0]['message']['content']);
+        }
+        
+        return "I'm having trouble processing your request right now. Please try again.";
+    }
+
     private function handle_special_commands($message, $settings) {
         $message_lower = strtolower(trim($message));
         
@@ -335,7 +524,7 @@ class AI_Website_Bot_API_Handler {
                "Just type your question and I'll do my best to help!";
     }
     
-    private function build_system_prompt($settings) {
+    private function build_system_prompt($settings, $page_context = null) {
         $prompt = $settings['bot_personality'];
         
         if (empty($prompt)) {
@@ -350,8 +539,22 @@ class AI_Website_Bot_API_Handler {
             $prompt .= "\n- Location: " . $settings['website_location'];
         }
         
-        if (!empty($settings['content_types'])) {
-            $prompt .= "\n- Available Content Types: " . implode(', ', $settings['content_types']);
+        // Add page context if available
+        if ($page_context && $page_context['type'] === 'article') {
+            $prompt .= "\n\nCurrent Page Context:";
+            $prompt .= "\n- Page Type: Article";
+            $prompt .= "\n- Article Title: " . $page_context['title'];
+            $prompt .= "\n- Published: " . $page_context['date'] . " by " . $page_context['author'];
+            
+            if (!empty($page_context['categories'])) {
+                $prompt .= "\n- Categories: " . implode(', ', $page_context['categories']);
+            }
+            
+            if (!empty($page_context['excerpt'])) {
+                $prompt .= "\n- Excerpt: " . substr($page_context['excerpt'], 0, 200);
+            }
+            
+            $prompt .= "\n\nYou can help users with questions about this specific article, including summarizing it, explaining key points, or finding related content.";
         }
         
         if (!empty($settings['bot_knowledge'])) {
@@ -359,7 +562,7 @@ class AI_Website_Bot_API_Handler {
         }
         
         $prompt .= "\n\nResponse Style: " . $settings['response_style'];
-        $prompt .= "\n\nKeep responses helpful, concise, and relevant to the website context. If you don't know something specific about the website, be honest about it.";
+        $prompt .= "\n\nKeep responses helpful, concise, and relevant to the website context.";
         
         return $prompt;
     }

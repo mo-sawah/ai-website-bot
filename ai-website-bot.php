@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AI Website Bot
  * Description: Intelligent AI chatbot for enhanced user engagement and content discovery
- * Version: 1.0.12
+ * Version: 1.0.13
  * Author: Mohamed Sawah
  * Author URI: https://sawahsolutions.com
  * Text Domain: ai-website-bot
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('AI_WEBSITE_BOT_VERSION', '1.0.12');
+define('AI_WEBSITE_BOT_VERSION', '1.0.13');
 define('AI_WEBSITE_BOT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('AI_WEBSITE_BOT_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -58,7 +58,6 @@ class AI_Website_Bot {
     
     public function enqueue_frontend_scripts() {
         if (AI_Website_Bot_Settings::get_option('enable_chatbot', true)) {
-            // No more FontAwesome dependency - just load our CSS and JS
             wp_enqueue_style(
                 'aiwb-frontend', 
                 AI_WEBSITE_BOT_PLUGIN_URL . 'assets/css/frontend.css', 
@@ -74,12 +73,54 @@ class AI_Website_Bot {
                 true
             );
             
+            // Get current page context
+            $page_context = $this->get_current_page_context();
+            
             wp_localize_script('aiwb-frontend', 'aiBotAjax', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('ai_bot_nonce'),
-                'settings' => AI_Website_Bot_Settings::get_frontend_settings()
+                'settings' => AI_Website_Bot_Settings::get_frontend_settings(),
+                'pageContext' => $page_context // Add page context
             ));
         }
+    }
+
+    // 2. Add this new method to the main plugin class:
+
+    private function get_current_page_context() {
+        global $post;
+        
+        $context = array(
+            'type' => 'unknown',
+            'title' => '',
+            'content' => '',
+            'excerpt' => '',
+            'url' => get_permalink(),
+            'date' => '',
+            'author' => ''
+        );
+        
+        // Only provide context for single post pages (articles)
+        if (is_single() && $post && $post->post_type === 'post') {
+            $context = array(
+                'type' => 'article',
+                'title' => get_the_title($post->ID),
+                'content' => wp_strip_all_tags(get_the_content()),
+                'excerpt' => wp_strip_all_tags(get_the_excerpt($post->ID)),
+                'url' => get_permalink($post->ID),
+                'date' => get_the_date('Y-m-d', $post->ID),
+                'author' => get_the_author_meta('display_name', $post->post_author),
+                'categories' => wp_get_post_categories($post->ID, array('fields' => 'names')),
+                'tags' => wp_get_post_tags($post->ID, array('fields' => 'names'))
+            );
+            
+            // Limit content length to avoid overwhelming the AI
+            if (strlen($context['content']) > 3000) {
+                $context['content'] = substr($context['content'], 0, 3000) . '...';
+            }
+        }
+        
+        return $context;
     }
 
     // Update the enqueue_admin_scripts method:
@@ -130,7 +171,14 @@ class AI_Website_Bot {
         
         try {
             $api_handler = new AI_Website_Bot_API_Handler();
-            $response = $api_handler->process_chat_message(sanitize_text_field($_POST['message']));
+            
+            // Get page context if provided
+            $page_context = isset($_POST['pageContext']) ? $_POST['pageContext'] : null;
+            
+            $response = $api_handler->process_chat_message(
+                sanitize_text_field($_POST['message']), 
+                $page_context
+            );
             
             if ($response['success']) {
                 wp_send_json_success(array('message' => $response['message']));

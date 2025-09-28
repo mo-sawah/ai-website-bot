@@ -9,6 +9,40 @@
       this.messageHistory = [];
 
       this.init();
+      this.addContextAwareQuickActions();
+    }
+
+    addContextAwareQuickActions() {
+      // Only add context actions if we're on an article page
+      if (aiBotAjax.pageContext && aiBotAjax.pageContext.type === "article") {
+        const $quickActions = $("#aiwb-quick-actions");
+
+        if ($quickActions.length) {
+          // Add article-specific quick actions
+          const contextActions = [
+            "Summarize this article",
+            "Key points",
+            "Related articles",
+          ];
+
+          contextActions.forEach((action) => {
+            const $actionBtn = $(
+              '<button class="aiwb-quick-action-btn aiwb-context-action" data-action="' +
+                action +
+                '">' +
+                action +
+                "</button>"
+            );
+            $quickActions.append($actionBtn);
+          });
+
+          // Bind events for new buttons
+          $(".aiwb-context-action").on("click", (e) => {
+            const action = $(e.target).data("action");
+            this.sendQuickAction(action);
+          });
+        }
+      }
     }
 
     init() {
@@ -205,6 +239,7 @@
         message: message,
         nonce: aiBotAjax.nonce,
         history: this.getRecentHistory(),
+        pageContext: aiBotAjax.pageContext || null, // Add page context
       };
 
       $.ajax({
@@ -224,7 +259,6 @@
             this.addMessage(response.data.message, "bot");
             this.trackEvent("message_success");
           } else if (response && response.data) {
-            // Handle error response from server
             const errorMessage =
               typeof response.data === "string"
                 ? response.data

@@ -818,3 +818,50 @@
   width: 18px !important;
   height: 18px !important;
 }
+
+/* Add this to your frontend.css file */
+
+/* Context-aware quick actions styling */
+.aiwb-context-action {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  position: relative !important;
+}
+
+.aiwb-context-action:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  color: white !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+}
+
+.aiwb-context-action::before {
+  content: "📄" !important;
+  margin-right: 4px !important;
+  font-size: 12px !important;
+}
+
+/* Separate context actions from regular ones */
+.aiwb-quick-actions {
+  border-top: 1px solid var(--aiwb-border) !important;
+  background: var(--aiwb-bg-primary) !important;
+  padding: 16px 20px !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  position: relative !important;
+}
+
+/* Add a subtle separator if context actions exist */
+.aiwb-quick-actions:has(.aiwb-context-action)::before {
+  content: "Article Actions:" !important;
+  display: block !important;
+  width: 100% !important;
+  font-size: 11px !important;
+  color: var(--aiwb-text-muted) !important;
+  margin-bottom: 8px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  font-weight: 500 !important;
+}
