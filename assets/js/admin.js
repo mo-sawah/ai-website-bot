@@ -1,5 +1,5 @@
 (function ($) {
-  "use strict";
+  ("use strict");
 
   class AIChatbotAdmin {
     constructor() {
@@ -287,14 +287,14 @@
 
     updatePreviewIcon(iconType) {
       const icons = {
-        chat: '<i class="fas fa-comments"></i>',
-        robot: '<i class="fas fa-robot"></i>',
-        help: '<i class="fas fa-question-circle"></i>',
-        support: '<i class="fas fa-headset"></i>',
-        message: '<i class="fas fa-envelope"></i>',
-        assistant: '<i class="fas fa-magic"></i>',
-        brain: '<i class="fas fa-brain"></i>',
-        sparkles: '<i class="fas fa-sparkles"></i>',
+        chat: '<i class="fa-solid fa-comments"></i>',
+        robot: '<i class="fa-solid fa-robot"></i>',
+        help: '<i class="fa-solid fa-circle-question"></i>',
+        support: '<i class="fa-solid fa-headset"></i>',
+        message: '<i class="fa-solid fa-envelope"></i>',
+        assistant: '<i class="fa-solid fa-wand-magic-sparkles"></i>',
+        brain: '<i class="fa-solid fa-brain"></i>',
+        sparkles: '<i class="fa-solid fa-sparkles"></i>',
       };
 
       $("#preview-icon").html(icons[iconType] || icons.robot);
@@ -425,20 +425,24 @@
     }
   }
 
+  // Add this function for the admin preview
   function updateIconPreview(iconType) {
     const icons = {
-      chat: '<i class="fas fa-comments"></i>',
-      robot: '<i class="fas fa-robot"></i>',
-      help: '<i class="fas fa-question-circle"></i>',
-      support: '<i class="fas fa-headset"></i>',
-      message: '<i class="fas fa-envelope"></i>',
-      assistant: '<i class="fas fa-magic"></i>',
-      brain: '<i class="fas fa-brain"></i>',
-      sparkles: '<i class="fas fa-sparkles"></i>',
+      chat: '<i class="fa-solid fa-comments"></i>',
+      robot: '<i class="fa-solid fa-robot"></i>',
+      help: '<i class="fa-solid fa-circle-question"></i>',
+      support: '<i class="fa-solid fa-headset"></i>',
+      message: '<i class="fa-solid fa-envelope"></i>',
+      assistant: '<i class="fa-solid fa-wand-magic-sparkles"></i>',
+      brain: '<i class="fa-solid fa-brain"></i>',
+      sparkles: '<i class="fa-solid fa-sparkles"></i>',
     };
 
     $("#icon-preview-display").html(icons[iconType] || icons.robot);
   }
+
+  // Make it globally accessible
+  window.updateIconPreview = updateIconPreview;
 
   // Initialize when DOM is ready
   $(document).ready(function () {

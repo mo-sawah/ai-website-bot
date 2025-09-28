@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AI Website Bot
  * Description: Intelligent AI chatbot for enhanced user engagement and content discovery
- * Version: 1.0.6
+ * Version: 1.0.7
  * Author: Mohamed Sawah
  * Author URI: https://sawahsolutions.com
  * Text Domain: ai-website-bot
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('AI_WEBSITE_BOT_VERSION', '1.0.6');
+define('AI_WEBSITE_BOT_VERSION', '1.0.7');
 define('AI_WEBSITE_BOT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('AI_WEBSITE_BOT_PLUGIN_URL', plugin_dir_url(__FILE__));
 
