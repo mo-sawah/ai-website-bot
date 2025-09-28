@@ -174,10 +174,12 @@ if (!defined('ABSPATH')) {
                             <label class="setting-label">Chat Icon</label>
                             <p class="setting-description">Choose an icon for the chat bubble</p>
                             <select name="chat_icon" class="setting-input">
-                                <option value="chat" <?php selected($settings['chat_icon'], 'chat'); ?>>Chat Bubble</option>
-                                <option value="robot" <?php selected($settings['chat_icon'], 'robot'); ?>>Robot</option>
-                                <option value="help" <?php selected($settings['chat_icon'], 'help'); ?>>Help</option>
-                                <option value="support" <?php selected($settings['chat_icon'], 'support'); ?>>Support</option>
+                                <option value="chat" <?php selected($settings['chat_icon'], 'chat'); ?>>💬 Chat Bubble</option>
+                                <option value="robot" <?php selected($settings['chat_icon'], 'robot'); ?>>🤖 Robot (Clean)</option>
+                                <option value="assistant" <?php selected($settings['chat_icon'], 'assistant'); ?>>✨ AI Assistant</option>
+                                <option value="message" <?php selected($settings['chat_icon'], 'message'); ?>>📨 Message</option>
+                                <option value="help" <?php selected($settings['chat_icon'], 'help'); ?>>❓ Help</option>
+                                <option value="support" <?php selected($settings['chat_icon'], 'support'); ?>>🎧 Support</option>
                             </select>
                         </div>
 

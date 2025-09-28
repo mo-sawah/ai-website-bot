@@ -486,6 +486,10 @@
   font-family: "Manrope", sans-serif !important;
   margin: 0 !important;
   outline: none !important;
+  line-height: 13px !important;
+  height: 30px !important;
+  text-transform: capitalize !important;
+  letter-spacing: 0 !important;
 }
 
 .aiwb-quick-action-btn:hover {
