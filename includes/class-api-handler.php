@@ -122,6 +122,7 @@ class AI_Website_Bot_API_Handler {
         
         $response = "Here are the most relevant articles about '{$search_term}':\n\n";
         
+        // In your existing search_website_articles method, replace the foreach loop:
         foreach ($top_posts as $post_data) {
             $post = $post_data['post'];
             $score = $post_data['score'];
@@ -135,7 +136,7 @@ class AI_Website_Bot_API_Handler {
                 $response .= $excerpt . "\n";
             }
             
-            $response .= "[View Article](" . get_permalink($post->ID) . ")\n\n";
+            $response .= '<a href="' . get_permalink($post->ID) . '" target="_blank">View Article</a>' . "\n\n";
         }
         
         return $response;
@@ -250,7 +251,7 @@ class AI_Website_Bot_API_Handler {
         foreach ($recent_posts as $post) {
             $response .= "**" . $post['post_title'] . "**\n";
             $response .= "Published: " . date('M j, Y', strtotime($post['post_date'])) . "\n";
-            $response .= "[View Article](" . get_permalink($post['ID']) . ")\n\n";
+            $response .= '<a href="' . get_permalink($post['ID']) . '" target="_blank">View Article</a>' . "\n\n";
         }
         
         return $response;
@@ -272,7 +273,7 @@ class AI_Website_Bot_API_Handler {
         foreach ($popular_posts as $post) {
             $response .= "**" . $post->post_title . "**\n";
             $response .= "Published: " . date('M j, Y', strtotime($post->post_date)) . "\n";
-            $response .= "[View Article](" . get_permalink($post->ID) . ")\n\n";
+            $response .= '<a href="' . get_permalink($post->ID) . '" target="_blank">View Article</a>' . "\n\n";
         }
         
         return $response;

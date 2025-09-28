@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AI Website Bot
  * Description: Intelligent AI chatbot for enhanced user engagement and content discovery
- * Version: 1.0.7
+ * Version: 1.0.8
  * Author: Mohamed Sawah
  * Author URI: https://sawahsolutions.com
  * Text Domain: ai-website-bot
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('AI_WEBSITE_BOT_VERSION', '1.0.7');
+define('AI_WEBSITE_BOT_VERSION', '1.0.8');
 define('AI_WEBSITE_BOT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('AI_WEBSITE_BOT_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -58,7 +58,10 @@ class AI_Website_Bot {
     
     public function enqueue_frontend_scripts() {
         if (AI_Website_Bot_Settings::get_option('enable_chatbot', true)) {
-            wp_enqueue_style('aiwb-frontend', AI_WEBSITE_BOT_PLUGIN_URL . 'assets/css/frontend.css', array(), AI_WEBSITE_BOT_VERSION);
+            // Make sure FontAwesome loads before our CSS
+            wp_enqueue_style('font-awesome');
+            
+            wp_enqueue_style('aiwb-frontend', AI_WEBSITE_BOT_PLUGIN_URL . 'assets/css/frontend.css', array('font-awesome'), AI_WEBSITE_BOT_VERSION);
             wp_enqueue_script('aiwb-frontend', AI_WEBSITE_BOT_PLUGIN_URL . 'assets/js/frontend.js', array('jquery'), AI_WEBSITE_BOT_VERSION, true);
             
             wp_localize_script('aiwb-frontend', 'aiBotAjax', array(

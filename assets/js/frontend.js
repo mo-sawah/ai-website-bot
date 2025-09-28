@@ -287,16 +287,20 @@
       // Basic formatting
       text = text.replace(/\n/g, "<br>");
 
-      // Make URLs clickable
+      // Handle bold text
+      text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+      text = text.replace(/\*(.*?)\*/g, "<em>$1</em>");
+
+      // Make URLs clickable (if they're plain URLs)
       const urlRegex = /(https?:\/\/[^\s]+)/g;
       text = text.replace(
         urlRegex,
         '<a href="$1" target="_blank" rel="noopener">$1</a>'
       );
 
-      // Basic markdown-like formatting
-      text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
-      text = text.replace(/\*(.*?)\*/g, "<em>$1</em>");
+      // Clean up extra <br> tags before links
+      text = text.replace(/<br>\s*<br>\s*(<a\s)/g, "<br>$1");
+      text = text.replace(/(<\/a>)\s*<br>\s*<br>/g, "$1<br>");
 
       return text;
     }

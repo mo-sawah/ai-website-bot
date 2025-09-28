@@ -713,3 +713,46 @@
   font-weight: 900 !important;
   font-style: normal !important;
 }
+
+/* Force FontAwesome to display properly in chatbot */
+.aiwb-chatbot-widget i[class*="fa-"],
+.aiwb-chatbot-widget .fa-solid,
+.aiwb-chatbot-widget .fas {
+  font-family: "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome" !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+  display: inline-block !important;
+  text-rendering: auto !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  line-height: 1 !important;
+  font-variant: normal !important;
+  text-transform: none !important;
+  speak: none !important;
+}
+
+/* Ensure icons inherit color and size */
+.aiwb-bubble-icon i,
+.aiwb-avatar-icon i,
+.aiwb-message-avatar i {
+  color: inherit !important;
+  font-size: inherit !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+  background: none !important;
+  vertical-align: baseline !important;
+}
+
+/* Specific fixes for bubble icon */
+.aiwb-bubble-icon {
+  font-size: 28px !important;
+  color: white !important;
+}
+
+.aiwb-avatar-icon {
+  font-size: 24px !important;
+  color: white !important;
+}
