@@ -1008,7 +1008,7 @@
 /* Action Buttons Container - Updated for 4 buttons */
 .aiwb-action-buttons {
   display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
+  grid-template-columns: 1fr 1fr 1fr 1fr !important;
   gap: 6px !important;
 }
 
