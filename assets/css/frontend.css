@@ -1,5 +1,6 @@
 /* AI Website Bot - Frontend Styles */
 @import url("https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&display=swap");
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css");
 
 :root {
   --aiwb-primary: #3b82f6;
@@ -682,4 +683,34 @@
   50% {
     transform: scale(1.2) !important;
   }
+}
+
+/* FontAwesome Icon Styling */
+.aiwb-bubble-icon i,
+.aiwb-avatar-icon i,
+.aiwb-message-avatar i {
+  font-size: inherit !important;
+  width: auto !important;
+  height: auto !important;
+  display: inline-block !important;
+  text-align: center !important;
+}
+
+.aiwb-bubble-icon {
+  font-size: 28px !important;
+}
+
+.aiwb-avatar-icon {
+  font-size: 24px !important;
+}
+
+.aiwb-message-avatar {
+  font-size: 18px !important;
+}
+
+/* Ensure FontAwesome loads properly */
+.aiwb-chatbot-widget i[class^="fa"] {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
 }

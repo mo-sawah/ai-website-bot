@@ -69,8 +69,171 @@ class AI_Website_Bot_API_Handler {
                 return $this->get_search_help();
             
             default:
+                // Check for search queries
+                if (preg_match('/latest\s+(\d+)\s+articles?\s+about\s+(.+)/i', $message, $matches)) {
+                    $count = intval($matches[1]);
+                    $search_term = trim($matches[2]);
+                    return $this->search_website_articles($search_term, $count);
+                }
+                
+                // Check for general search queries
+                if (preg_match('/search\s+for\s+(.+)/i', $message, $matches)) {
+                    $search_term = trim($matches[1]);
+                    return $this->search_website_articles($search_term, 5);
+                }
+                
                 return null;
         }
+    }
+
+    private function search_website_articles($search_term, $count = 5) {
+        // Enhanced search with multiple fields and better relevance
+        $search_query = new WP_Query(array(
+            'post_type' => 'post',
+            'post_status' => 'publish',
+            'posts_per_page' => $count * 2, // Get more to filter better results
+            's' => $search_term,
+            'meta_query' => array(
+                'relation' => 'OR',
+                array(
+                    'key' => '_yoast_wpseo_metadesc',
+                    'value' => $search_term,
+                    'compare' => 'LIKE'
+                )
+            )
+        ));
+        
+        $posts = $search_query->posts;
+        
+        if (empty($posts)) {
+            // Fallback: try partial word matching
+            $posts = $this->fuzzy_search($search_term, $count);
+        }
+        
+        if (empty($posts)) {
+            return "I couldn't find any articles about '{$search_term}' on our website. Try browsing our recent posts or contact us for specific information.";
+        }
+        
+        // Score and rank results by relevance
+        $scored_posts = $this->score_search_results($posts, $search_term);
+        
+        // Take only the best results
+        $top_posts = array_slice($scored_posts, 0, $count);
+        
+        $response = "Here are the most relevant articles about '{$search_term}':\n\n";
+        
+        foreach ($top_posts as $post_data) {
+            $post = $post_data['post'];
+            $score = $post_data['score'];
+            
+            $response .= "• **" . $post->post_title . "**\n";
+            $response .= "  Published: " . date('M j, Y', strtotime($post->post_date)) . "\n";
+            
+            // Add excerpt if available
+            if (!empty($post->post_excerpt)) {
+                $excerpt = wp_trim_words($post->post_excerpt, 20);
+                $response .= "  " . $excerpt . "\n";
+            }
+            
+            $response .= "  Link: " . get_permalink($post->ID) . "\n\n";
+        }
+        
+        return $response;
+    }
+
+    private function fuzzy_search($search_term, $count) {
+        global $wpdb;
+        
+        // Split search term into individual words
+        $words = explode(' ', $search_term);
+        $word_conditions = array();
+        
+        foreach ($words as $word) {
+            if (strlen(trim($word)) > 2) { // Skip very short words
+                $word_conditions[] = $wpdb->prepare(
+                    "(post_title LIKE %s OR post_content LIKE %s)",
+                    '%' . $word . '%',
+                    '%' . $word . '%'
+                );
+            }
+        }
+        
+        if (empty($word_conditions)) {
+            return array();
+        }
+        
+        $where_clause = implode(' OR ', $word_conditions);
+        
+        $query = "
+            SELECT * FROM {$wpdb->posts} 
+            WHERE post_status = 'publish' 
+            AND post_type = 'post'
+            AND ({$where_clause})
+            ORDER BY post_date DESC 
+            LIMIT " . ($count * 2);
+        
+        return $wpdb->get_results($query);
+    }
+
+    private function score_search_results($posts, $search_term) {
+        $scored_posts = array();
+        $search_words = explode(' ', strtolower($search_term));
+        
+        foreach ($posts as $post) {
+            $score = 0;
+            $title_lower = strtolower($post->post_title);
+            $content_lower = strtolower($post->post_content);
+            
+            foreach ($search_words as $word) {
+                if (strlen(trim($word)) < 3) continue;
+                
+                // Title matches get highest score
+                if (strpos($title_lower, $word) !== false) {
+                    $score += 10;
+                    
+                    // Exact title match gets bonus
+                    if ($title_lower === strtolower($search_term)) {
+                        $score += 20;
+                    }
+                }
+                
+                // Content matches
+                $content_matches = substr_count($content_lower, $word);
+                $score += $content_matches * 2;
+                
+                // Recent posts get slight boost
+                $days_old = (time() - strtotime($post->post_date)) / (60 * 60 * 24);
+                if ($days_old < 30) {
+                    $score += 3;
+                } elseif ($days_old < 90) {
+                    $score += 1;
+                }
+            }
+            
+            // Category relevance (if you have specific categories)
+            $categories = get_the_category($post->ID);
+            foreach ($categories as $category) {
+                foreach ($search_words as $word) {
+                    if (strpos(strtolower($category->name), $word) !== false) {
+                        $score += 5;
+                    }
+                }
+            }
+            
+            if ($score > 0) {
+                $scored_posts[] = array(
+                    'post' => $post,
+                    'score' => $score
+                );
+            }
+        }
+        
+        // Sort by score (highest first)
+        usort($scored_posts, function($a, $b) {
+            return $b['score'] - $a['score'];
+        });
+        
+        return $scored_posts;
     }
     
     private function get_recent_posts() {

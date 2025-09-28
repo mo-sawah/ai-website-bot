@@ -172,15 +172,22 @@ if (!defined('ABSPATH')) {
 
                         <div class="setting-group">
                             <label class="setting-label">Chat Icon</label>
-                            <p class="setting-description">Choose an icon for the chat bubble</p>
-                            <select name="chat_icon" class="setting-input">
-                                <option value="chat" <?php selected($settings['chat_icon'], 'chat'); ?>>💬 Chat Bubble</option>
-                                <option value="robot" <?php selected($settings['chat_icon'], 'robot'); ?>>🤖 Robot (Clean)</option>
-                                <option value="assistant" <?php selected($settings['chat_icon'], 'assistant'); ?>>✨ AI Assistant</option>
-                                <option value="message" <?php selected($settings['chat_icon'], 'message'); ?>>📨 Message</option>
+                            <p class="setting-description">Choose a FontAwesome icon for the chat bubble</p>
+                            <select name="chat_icon" class="setting-input" onchange="updateIconPreview(this.value)">
+                                <option value="robot" <?php selected($settings['chat_icon'], 'robot'); ?>>🤖 Robot</option>
+                                <option value="chat" <?php selected($settings['chat_icon'], 'chat'); ?>>💬 Chat</option>
+                                <option value="assistant" <?php selected($settings['chat_icon'], 'assistant'); ?>>✨ Magic/AI</option>
+                                <option value="brain" <?php selected($settings['chat_icon'], 'brain'); ?>>🧠 Brain</option>
+                                <option value="sparkles" <?php selected($settings['chat_icon'], 'sparkles'); ?>>✨ Sparkles</option>
                                 <option value="help" <?php selected($settings['chat_icon'], 'help'); ?>>❓ Help</option>
                                 <option value="support" <?php selected($settings['chat_icon'], 'support'); ?>>🎧 Support</option>
+                                <option value="message" <?php selected($settings['chat_icon'], 'message'); ?>>📧 Message</option>
                             </select>
+                            
+                            <div class="icon-preview" style="margin-top: 10px; font-size: 24px; color: var(--aiwb-primary);">
+                                <span id="icon-preview-display"><?php echo $frontend->get_chat_icon_svg($settings['chat_icon']); ?></span>
+                                <span style="margin-left: 10px; font-size: 14px; color: #666;">Preview</span>
+                            </div>
                         </div>
 
                         <div class="setting-group">
