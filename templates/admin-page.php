@@ -192,6 +192,28 @@ if (!defined('ABSPATH')) {
                             <p class="setting-description">Pre-defined buttons for common queries (one per line)</p>
                             <textarea name="quick_actions" class="setting-textarea" rows="4"><?php echo esc_textarea($settings['quick_actions']); ?></textarea>
                         </div>
+
+                        <!-- Add this in the Appearance tab after the chat icon setting -->
+                        <div class="setting-group">
+                            <label class="setting-label">Theme Mode</label>
+                            <p class="setting-description">Choose between light and dark mode, or auto-detect from user's system preference</p>
+                            <select name="theme_mode" class="setting-input">
+                                <option value="light" <?php selected($settings['theme_mode'], 'light'); ?>>Light Mode</option>
+                                <option value="dark" <?php selected($settings['theme_mode'], 'dark'); ?>>Dark Mode</option>
+                            </select>
+                        </div>
+
+                        <div class="setting-group">
+                            <label class="setting-label">Auto Theme Detection</label>
+                            <p class="setting-description">Automatically switch between light and dark mode based on user's system preference</p>
+                            <div class="toggle-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" name="auto_theme" <?php checked($settings['auto_theme']); ?>>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <span class="toggle-label">Auto Detection</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Advanced Tab -->

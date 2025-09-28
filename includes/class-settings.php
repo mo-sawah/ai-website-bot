@@ -16,6 +16,8 @@ class AI_Website_Bot_Settings {
             'website_type' => 'blog',
             'content_types' => array('posts', 'pages'),
             'openrouter_api_key' => '',
+            'theme_mode' => 'light', // Add this line
+            'auto_theme' => false, // Add this line
             'ai_model' => 'mistralai/mistral-7b-instruct:free',
             'bot_personality' => 'You are a helpful AI assistant for this website. Be friendly, professional, and informative.',
             'bot_knowledge' => '',
@@ -68,7 +70,9 @@ class AI_Website_Bot_Settings {
             'welcomeMessage' => $settings['welcome_message'],
             'quickActions' => explode("\n", $settings['quick_actions']),
             'windowSize' => $settings['chat_window_size'],
-            'chatIcon' => $settings['chat_icon']
+            'chatIcon' => $settings['chat_icon'],
+            'themeMode' => $settings['theme_mode'], // Add this line
+            'autoTheme' => $settings['auto_theme'] // Add this line
         );
     }
 }

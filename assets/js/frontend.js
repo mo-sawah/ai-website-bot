@@ -1,7 +1,7 @@
 (function ($) {
   "use strict";
 
-  class AIChatbot {
+  class AIWebsiteChatbot {
     constructor() {
       this.isOpen = false;
       this.isMinimized = false;
@@ -15,17 +15,41 @@
       this.bindEvents();
       this.loadChatHistory();
       this.setupAutoResize();
+      this.initTheme();
+    }
+
+    initTheme() {
+      const settings = aiBotAjax.settings;
+      if (settings.autoTheme) {
+        this.setupAutoTheme();
+      } else {
+        this.setTheme(settings.themeMode);
+      }
+    }
+
+    setupAutoTheme() {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      this.setTheme(mediaQuery.matches ? "dark" : "light");
+
+      mediaQuery.addEventListener("change", (e) => {
+        this.setTheme(e.matches ? "dark" : "light");
+      });
+    }
+
+    setTheme(theme) {
+      const $widget = $("#aiwb-chatbot-widget");
+      $widget.attr("data-aiwb-theme", theme);
     }
 
     bindEvents() {
-      const $widget = $("#ai-chatbot-widget");
-      const $bubble = $("#chat-bubble");
-      const $window = $("#chat-window");
-      const $closeBtn = $("#close-chat");
-      const $minimizeBtn = $("#minimize-chat");
-      const $sendBtn = $("#send-message");
-      const $input = $("#message-input");
-      const $quickActions = $(".quick-action-btn");
+      const $widget = $("#aiwb-chatbot-widget");
+      const $bubble = $("#aiwb-chat-bubble");
+      const $window = $("#aiwb-chat-window");
+      const $closeBtn = $("#aiwb-close-chat");
+      const $minimizeBtn = $("#aiwb-minimize-chat");
+      const $sendBtn = $("#aiwb-send-message");
+      const $input = $("#aiwb-message-input");
+      const $quickActions = $(".aiwb-quick-action-btn");
 
       // Toggle chat window
       $bubble.on("click", () => this.toggleChat());
@@ -71,17 +95,17 @@
     }
 
     openChat() {
-      const $window = $("#chat-window");
-      const $bubble = $("#chat-bubble");
+      const $window = $("#aiwb-chat-window");
+      const $bubble = $("#aiwb-chat-bubble");
 
-      $window.addClass("open");
+      $window.addClass("aiwb-open");
       $bubble.hide();
       this.isOpen = true;
       this.isMinimized = false;
 
       // Focus input
       setTimeout(() => {
-        $("#message-input").focus();
+        $("#aiwb-message-input").focus();
       }, 300);
 
       // Scroll to bottom
@@ -92,10 +116,10 @@
     }
 
     closeChat() {
-      const $window = $("#chat-window");
-      const $bubble = $("#chat-bubble");
+      const $window = $("#aiwb-chat-window");
+      const $bubble = $("#aiwb-chat-bubble");
 
-      $window.removeClass("open");
+      $window.removeClass("aiwb-open");
       $bubble.show();
       this.isOpen = false;
       this.isMinimized = false;
@@ -105,9 +129,9 @@
     }
 
     minimizeChat() {
-      const $window = $("#chat-window");
+      const $window = $("#aiwb-chat-window");
 
-      $window.removeClass("open");
+      $window.removeClass("aiwb-open");
       this.isOpen = false;
       this.isMinimized = true;
 
@@ -116,7 +140,7 @@
     }
 
     sendMessage() {
-      const $input = $("#message-input");
+      const $input = $("#aiwb-message-input");
       const message = $input.val().trim();
 
       if (!message || this.isTyping) {
@@ -139,22 +163,22 @@
     }
 
     addMessage(text, sender) {
-      const $messages = $("#chat-messages");
+      const $messages = $("#aiwb-chat-messages");
       const time = new Date().toLocaleTimeString([], {
         hour: "2-digit",
         minute: "2-digit",
       });
 
       const messageHtml = `
-                <div class="message ${sender}-message">
-                    <div class="message-avatar">
+                <div class="aiwb-message aiwb-${sender}-message">
+                    <div class="aiwb-message-avatar">
                         ${sender === "bot" ? this.getBotIcon() : "U"}
                     </div>
-                    <div class="message-content">
-                        <div class="message-text">${this.formatMessage(
+                    <div class="aiwb-message-content">
+                        <div class="aiwb-message-text">${this.formatMessage(
                           text
                         )}</div>
-                        <div class="message-time">${time}</div>
+                        <div class="aiwb-message-time">${time}</div>
                     </div>
                 </div>
             `;
@@ -190,15 +214,15 @@
         success: (response) => {
           this.hideTyping();
 
-          if (response.success) {
+          if (response.success && response.data && response.data.message) {
             this.addMessage(response.data.message, "bot");
             this.trackEvent("message_success");
           } else {
-            this.addMessage(
+            const errorMessage =
+              (response.data && response.data.message) ||
               response.data ||
-                "Sorry, I encountered an error. Please try again.",
-              "bot"
-            );
+              "Sorry, I encountered an error. Please try again.";
+            this.addMessage(errorMessage, "bot");
             this.trackEvent("message_error");
           }
         },
@@ -209,29 +233,34 @@
 
           if (status === "timeout") {
             errorMessage = "The response took too long. Please try again.";
+          } else if (xhr.status === 400) {
+            errorMessage =
+              "There was an issue with your request. Please try again.";
+          } else if (xhr.status === 500) {
+            errorMessage = "Server error. Please try again later.";
           }
 
           this.addMessage(errorMessage, "bot");
-          this.trackEvent("message_error", { error: error });
+          this.trackEvent("message_error", { error: error, status: status });
         },
       });
     }
 
     showTyping() {
       this.isTyping = true;
-      $("#typing-indicator").addClass("show");
-      $("#send-message").prop("disabled", true);
+      $("#aiwb-typing-indicator").addClass("aiwb-show");
+      $("#aiwb-send-message").prop("disabled", true);
       this.scrollToBottom();
     }
 
     hideTyping() {
       this.isTyping = false;
-      $("#typing-indicator").removeClass("show");
-      $("#send-message").prop("disabled", false);
+      $("#aiwb-typing-indicator").removeClass("aiwb-show");
+      $("#aiwb-send-message").prop("disabled", false);
     }
 
     hideQuickActions() {
-      $("#quick-actions").fadeOut();
+      $("#aiwb-quick-actions").fadeOut();
     }
 
     formatMessage(text) {
@@ -267,7 +296,7 @@
     }
 
     setupAutoResize() {
-      const $input = $("#message-input");
+      const $input = $("#aiwb-message-input");
 
       $input.on("input", () => {
         this.resizeInput();
@@ -275,13 +304,13 @@
     }
 
     resizeInput() {
-      const $input = $("#message-input");
+      const $input = $("#aiwb-message-input");
       $input[0].style.height = "auto";
       $input[0].style.height = Math.min($input[0].scrollHeight, 120) + "px";
     }
 
     scrollToBottom() {
-      const $messages = $("#chat-messages");
+      const $messages = $("#aiwb-chat-messages");
       $messages.scrollTop($messages[0].scrollHeight);
     }
 
@@ -290,34 +319,39 @@
     }
 
     loadChatHistory() {
-      const history = localStorage.getItem("ai_bot_history");
-      if (history) {
-        try {
+      try {
+        const history = localStorage.getItem("aiwb_bot_history");
+        if (history) {
           this.messageHistory = JSON.parse(history);
-        } catch (e) {
-          this.messageHistory = [];
         }
+      } catch (e) {
+        console.log("Failed to load chat history:", e);
+        this.messageHistory = [];
       }
     }
 
     saveChatHistory() {
-      // Keep only last 50 messages
-      if (this.messageHistory.length > 50) {
-        this.messageHistory = this.messageHistory.slice(-50);
-      }
+      try {
+        // Keep only last 50 messages
+        if (this.messageHistory.length > 50) {
+          this.messageHistory = this.messageHistory.slice(-50);
+        }
 
-      localStorage.setItem(
-        "ai_bot_history",
-        JSON.stringify(this.messageHistory)
-      );
+        localStorage.setItem(
+          "aiwb_bot_history",
+          JSON.stringify(this.messageHistory)
+        );
+      } catch (e) {
+        console.log("Failed to save chat history:", e);
+      }
     }
 
     showBubbleNotification() {
-      const $bubble = $("#chat-bubble");
-      $bubble.addClass("has-notification");
+      const $bubble = $("#aiwb-chat-bubble");
+      $bubble.addClass("aiwb-has-notification");
 
       setTimeout(() => {
-        $bubble.removeClass("has-notification");
+        $bubble.removeClass("aiwb-has-notification");
       }, 3000);
     }
 
@@ -330,20 +364,24 @@
         });
       }
 
-      // Send to WordPress
-      $.post(aiBotAjax.ajaxurl, {
-        action: "ai_bot_track_event",
-        event: event,
-        data: data,
-        nonce: aiBotAjax.nonce,
-      });
+      // Send to WordPress (optional, don't fail if it doesn't work)
+      try {
+        $.post(aiBotAjax.ajaxurl, {
+          action: "ai_bot_track_event",
+          event: event,
+          data: data,
+          nonce: aiBotAjax.nonce,
+        });
+      } catch (e) {
+        // Silently fail
+      }
     }
   }
 
   // Initialize when DOM is ready
   $(document).ready(function () {
-    if ($("#ai-chatbot-widget").length) {
-      new AIChatbot();
+    if ($("#aiwb-chatbot-widget").length) {
+      new AIWebsiteChatbot();
     }
   });
 })(jQuery);
