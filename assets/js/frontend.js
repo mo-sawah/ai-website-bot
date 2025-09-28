@@ -83,7 +83,6 @@
       const $minimizeBtn = $("#aiwb-minimize-chat");
       const $sendBtn = $("#aiwb-send-message");
       const $input = $("#aiwb-message-input");
-      const $quickActions = $(".aiwb-quick-action-btn");
 
       // Toggle chat window
       $bubble.on("click", () => this.toggleChat());
@@ -99,9 +98,9 @@
         }
       });
 
-      // Quick actions
-      $quickActions.on("click", (e) => {
-        const action = $(e.target).data("action");
+      // NEW: Handle improved action buttons
+      $(document).on("click", ".aiwb-action-btn", (e) => {
+        const action = $(e.target).closest(".aiwb-action-btn").data("action");
         this.sendQuickAction(action);
       });
 
@@ -136,6 +135,9 @@
       $bubble.hide();
       this.isOpen = true;
       this.isMinimized = false;
+
+      // Ensure action section is visible
+      $("#aiwb-action-section").show();
 
       // Focus input
       setTimeout(() => {
@@ -191,9 +193,30 @@
     }
 
     sendQuickAction(action) {
-      this.addMessage(action, "user");
-      this.hideQuickActions();
-      this.processMessage(action);
+      // Map short labels to full commands
+      const actionMap = {
+        Recent: "Recent Posts",
+        Popular: "Popular Content",
+        Summarize: "Summarize this article",
+        "Key Points": "Key points of this article",
+        Related: "Related articles",
+      };
+
+      const fullAction = actionMap[action] || action;
+
+      this.addMessage(fullAction, "user");
+      this.hideActionSection();
+      this.processMessage(fullAction);
+    }
+
+    // Add method to hide action section after use:
+    hideActionSection() {
+      $("#aiwb-action-section").fadeOut(300);
+
+      // Show it again after response
+      setTimeout(() => {
+        $("#aiwb-action-section").fadeIn(300);
+      }, 2000);
     }
 
     addMessage(text, sender) {

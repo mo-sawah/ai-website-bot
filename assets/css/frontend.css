@@ -462,40 +462,175 @@
   color: rgba(255, 255, 255, 0.7) !important;
 }
 
-/* Quick Actions */
-.aiwb-quick-actions {
+/* Replace the old quick actions CSS in frontend.css with this: */
+
+/* Action Section - replaces quick actions */
+.aiwb-action-section {
   padding: 16px 20px !important;
   border-top: 1px solid var(--aiwb-border) !important;
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 8px !important;
   background: var(--aiwb-bg-primary) !important;
   margin: 0 !important;
 }
 
-.aiwb-quick-action-btn {
-  background: var(--aiwb-primary-light) !important;
-  color: var(--aiwb-primary) !important;
-  border: 1px solid rgba(59, 130, 246, 0.2) !important;
-  padding: 8px 12px !important;
-  border-radius: 20px !important;
-  font-size: 12px !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  font-weight: 500 !important;
-  font-family: "Manrope", sans-serif !important;
-  margin: 0 !important;
-  outline: none !important;
-  line-height: 13px !important;
-  height: 30px !important;
-  text-transform: capitalize !important;
-  letter-spacing: 0 !important;
+/* Action Groups */
+.aiwb-action-group {
+  margin-bottom: 12px !important;
 }
 
-.aiwb-quick-action-btn:hover {
-  background: var(--aiwb-primary) !important;
+.aiwb-action-group:last-child {
+  margin-bottom: 0 !important;
+}
+
+.aiwb-group-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 8px !important;
+}
+
+.aiwb-group-label {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: var(--aiwb-text-muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.aiwb-group-badge {
+  background: #10b981 !important;
   color: white !important;
+  font-size: 9px !important;
+  padding: 2px 6px !important;
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+}
+
+/* Action Buttons Container */
+.aiwb-action-buttons {
+  display: flex !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+}
+
+/* Action Button Base Styles */
+.aiwb-action-btn {
+  background: #f1f5f9 !important;
+  border: 1px solid var(--aiwb-border) !important;
+  border-radius: 16px !important;
+  padding: 6px 12px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #475569 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  outline: none !important;
+  font-family: inherit !important;
+}
+
+.aiwb-action-btn:hover {
+  background: #e2e8f0 !important;
+  border-color: #cbd5e1 !important;
   transform: translateY(-1px) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.aiwb-action-btn:active {
+  transform: translateY(0) !important;
+}
+
+/* Button Icons */
+.aiwb-btn-icon {
+  width: 12px !important;
+  height: 12px !important;
+  opacity: 0.8 !important;
+  fill: currentColor !important;
+}
+
+/* Primary Action Buttons (Browse section) */
+.aiwb-action-btn.aiwb-primary {
+  background: linear-gradient(
+    135deg,
+    var(--aiwb-primary) 0%,
+    var(--aiwb-primary-dark) 100%
+  ) !important;
+  border-color: var(--aiwb-primary-dark) !important;
+  color: white !important;
+}
+
+.aiwb-action-btn.aiwb-primary:hover {
+  background: linear-gradient(
+    135deg,
+    var(--aiwb-primary-dark) 0%,
+    #1d4ed8 100%
+  ) !important;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+}
+
+.aiwb-action-btn.aiwb-primary .aiwb-btn-icon {
+  opacity: 1 !important;
+}
+
+/* Context Action Buttons (Article section) */
+.aiwb-action-btn.aiwb-context {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  border-color: #059669 !important;
+  color: white !important;
+}
+
+.aiwb-action-btn.aiwb-context:hover {
+  background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+}
+
+.aiwb-action-btn.aiwb-context .aiwb-btn-icon {
+  opacity: 1 !important;
+}
+
+/* Context Indicator */
+.aiwb-context-indicator {
+  position: absolute !important;
+  top: -2px !important;
+  right: -2px !important;
+  width: 6px !important;
+  height: 6px !important;
+  background: #10b981 !important;
+  border-radius: 50% !important;
+  border: 1px solid white !important;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .aiwb-action-section {
+    padding: 12px 16px !important;
+  }
+
+  .aiwb-action-btn {
+    font-size: 11px !important;
+    padding: 5px 10px !important;
+  }
+
+  .aiwb-btn-icon {
+    width: 10px !important;
+    height: 10px !important;
+  }
+
+  .aiwb-group-label {
+    font-size: 10px !important;
+  }
+
+  .aiwb-group-badge {
+    font-size: 8px !important;
+    padding: 1px 4px !important;
+  }
 }
 
 /* Chat Input */
