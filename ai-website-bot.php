@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AI Website Bot
  * Description: Intelligent AI chatbot for enhanced user engagement and content discovery
- * Version: 1.0.8
+ * Version: 1.0.9
  * Author: Mohamed Sawah
  * Author URI: https://sawahsolutions.com
  * Text Domain: ai-website-bot
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('AI_WEBSITE_BOT_VERSION', '1.0.8');
+define('AI_WEBSITE_BOT_VERSION', '1.0.9');
 define('AI_WEBSITE_BOT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('AI_WEBSITE_BOT_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -58,11 +58,29 @@ class AI_Website_Bot {
     
     public function enqueue_frontend_scripts() {
         if (AI_Website_Bot_Settings::get_option('enable_chatbot', true)) {
-            // Make sure FontAwesome loads before our CSS
-            wp_enqueue_style('font-awesome');
+            // Enqueue FontAwesome from CDN
+            wp_enqueue_style(
+                'fontawesome', 
+                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+                array(),
+                '6.4.0'
+            );
             
-            wp_enqueue_style('aiwb-frontend', AI_WEBSITE_BOT_PLUGIN_URL . 'assets/css/frontend.css', array('font-awesome'), AI_WEBSITE_BOT_VERSION);
-            wp_enqueue_script('aiwb-frontend', AI_WEBSITE_BOT_PLUGIN_URL . 'assets/js/frontend.js', array('jquery'), AI_WEBSITE_BOT_VERSION, true);
+            // Enqueue plugin styles with FontAwesome as dependency
+            wp_enqueue_style(
+                'aiwb-frontend', 
+                AI_WEBSITE_BOT_PLUGIN_URL . 'assets/css/frontend.css', 
+                array('fontawesome'), 
+                AI_WEBSITE_BOT_VERSION
+            );
+            
+            wp_enqueue_script(
+                'aiwb-frontend', 
+                AI_WEBSITE_BOT_PLUGIN_URL . 'assets/js/frontend.js', 
+                array('jquery'), 
+                AI_WEBSITE_BOT_VERSION, 
+                true
+            );
             
             wp_localize_script('aiwb-frontend', 'aiBotAjax', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),
@@ -74,8 +92,28 @@ class AI_Website_Bot {
     
     public function enqueue_admin_scripts($hook) {
         if ($hook === 'toplevel_page_ai-website-bot') {
-            wp_enqueue_style('aiwb-admin', AI_WEBSITE_BOT_PLUGIN_URL . 'assets/css/admin.css', array(), AI_WEBSITE_BOT_VERSION);
-            wp_enqueue_script('aiwb-admin', AI_WEBSITE_BOT_PLUGIN_URL . 'assets/js/admin.js', array('jquery'), AI_WEBSITE_BOT_VERSION, true);
+            // Enqueue FontAwesome for admin
+            wp_enqueue_style(
+                'fontawesome', 
+                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+                array(),
+                '6.4.0'
+            );
+            
+            wp_enqueue_style(
+                'aiwb-admin', 
+                AI_WEBSITE_BOT_PLUGIN_URL . 'assets/css/admin.css', 
+                array('fontawesome'), 
+                AI_WEBSITE_BOT_VERSION
+            );
+            
+            wp_enqueue_script(
+                'aiwb-admin', 
+                AI_WEBSITE_BOT_PLUGIN_URL . 'assets/js/admin.js', 
+                array('jquery'), 
+                AI_WEBSITE_BOT_VERSION, 
+                true
+            );
             
             wp_localize_script('aiwb-admin', 'aiBotAdmin', array(
                 'ajaxurl' => admin_url('admin-ajax.php'),

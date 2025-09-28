@@ -291,14 +291,20 @@
       text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
       text = text.replace(/\*(.*?)\*/g, "<em>$1</em>");
 
-      // Make URLs clickable (if they're plain URLs)
-      const urlRegex = /(https?:\/\/[^\s]+)/g;
+      // Handle markdown-style links [text](url)
+      text = text.replace(
+        /\[([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" rel="noopener">$1</a>'
+      );
+
+      // Make plain URLs clickable (if they're not already in markdown format)
+      const urlRegex = /(https?:\/\/[^\s<>]+)(?![^<]*>|[^<>]*<\/a>)/g;
       text = text.replace(
         urlRegex,
         '<a href="$1" target="_blank" rel="noopener">$1</a>'
       );
 
-      // Clean up extra <br> tags before links
+      // Clean up extra <br> tags
       text = text.replace(/<br>\s*<br>\s*(<a\s)/g, "<br>$1");
       text = text.replace(/(<\/a>)\s*<br>\s*<br>/g, "$1<br>");
 

@@ -122,21 +122,19 @@ class AI_Website_Bot_API_Handler {
         
         $response = "Here are the most relevant articles about '{$search_term}':\n\n";
         
-        // In your existing search_website_articles method, replace the foreach loop:
         foreach ($top_posts as $post_data) {
             $post = $post_data['post'];
-            $score = $post_data['score'];
             
-            $response .= "**" . $post->post_title . "**\n";
+            $response .= "**" . esc_html($post->post_title) . "**\n";
             $response .= "Published: " . date('M j, Y', strtotime($post->post_date)) . "\n";
             
             // Add excerpt if available
             if (!empty($post->post_excerpt)) {
-                $excerpt = wp_trim_words($post->post_excerpt, 20);
+                $excerpt = wp_trim_words(strip_tags($post->post_excerpt), 20);
                 $response .= $excerpt . "\n";
             }
             
-            $response .= '<a href="' . get_permalink($post->ID) . '" target="_blank">View Article</a>' . "\n\n";
+            $response .= "[View Article](" . get_permalink($post->ID) . ")\n\n";
         }
         
         return $response;
@@ -249,9 +247,9 @@ class AI_Website_Bot_API_Handler {
         
         $response = "Here are our latest posts:\n\n";
         foreach ($recent_posts as $post) {
-            $response .= "**" . $post['post_title'] . "**\n";
+            $response .= "**" . esc_html($post['post_title']) . "**\n";
             $response .= "Published: " . date('M j, Y', strtotime($post['post_date'])) . "\n";
-            $response .= '<a href="' . get_permalink($post['ID']) . '" target="_blank">View Article</a>' . "\n\n";
+            $response .= "[View Article](" . get_permalink($post['ID']) . ")\n\n";
         }
         
         return $response;
@@ -271,9 +269,9 @@ class AI_Website_Bot_API_Handler {
         
         $response = "Here's our most popular content:\n\n";
         foreach ($popular_posts as $post) {
-            $response .= "**" . $post->post_title . "**\n";
+            $response .= "**" . esc_html($post->post_title) . "**\n";
             $response .= "Published: " . date('M j, Y', strtotime($post->post_date)) . "\n";
-            $response .= '<a href="' . get_permalink($post->ID) . '" target="_blank">View Article</a>' . "\n\n";
+            $response .= "[View Article](" . get_permalink($post->ID) . ")\n\n";
         }
         
         return $response;
