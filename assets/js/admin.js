@@ -341,7 +341,7 @@
         if (value && !value.includes("/")) {
           $(this).addClass("invalid");
           $(this).after(
-            '<div class-error">Model name should be in format "provider/model-name"</div>'
+            '<div class="validation-error">Model name should be in format "provider/model-name"</div>'
           );
         } else {
           $(this).removeClass("invalid");

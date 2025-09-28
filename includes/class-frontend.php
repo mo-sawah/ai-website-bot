@@ -38,5 +38,50 @@ class AI_Website_Bot_Frontend {
         
         return isset($icons[$icon_type]) ? $icons[$icon_type] : $icons['chat'];
     }
+    
+    // Add the missing color methods
+    public function darken_color($color, $factor) {
+        // Remove # if present
+        $color = ltrim($color, '#');
+        
+        // Convert hex to RGB
+        if (strlen($color) == 3) {
+            $color = $color[0] . $color[0] . $color[1] . $color[1] . $color[2] . $color[2];
+        }
+        
+        $r = hexdec(substr($color, 0, 2));
+        $g = hexdec(substr($color, 2, 2));
+        $b = hexdec(substr($color, 4, 2));
+        
+        // Darken
+        $r = max(0, min(255, $r * (1 - $factor)));
+        $g = max(0, min(255, $g * (1 - $factor)));
+        $b = max(0, min(255, $b * (1 - $factor)));
+        
+        // Convert back to hex
+        return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+    }
+    
+    public function lighten_color($color, $factor) {
+        // Remove # if present
+        $color = ltrim($color, '#');
+        
+        // Convert hex to RGB
+        if (strlen($color) == 3) {
+            $color = $color[0] . $color[0] . $color[1] . $color[1] . $color[2] . $color[2];
+        }
+        
+        $r = hexdec(substr($color, 0, 2));
+        $g = hexdec(substr($color, 2, 2));
+        $b = hexdec(substr($color, 4, 2));
+        
+        // Lighten
+        $r = max(0, min(255, $r + (255 - $r) * $factor));
+        $g = max(0, min(255, $g + (255 - $g) * $factor));
+        $b = max(0, min(255, $b + (255 - $b) * $factor));
+        
+        // Convert back to hex
+        return '#' . sprintf('%02x%02x%02x', $r, $g, $b);
+    }
 }
 ?>

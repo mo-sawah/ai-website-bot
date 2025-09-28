@@ -310,6 +310,7 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
     </div>
+    <input type="hidden" id="ai-bot-nonce" value="<?php echo wp_create_nonce('ai_bot_admin_nonce'); ?>">
 </div>
 
 <script>

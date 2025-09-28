@@ -95,13 +95,17 @@ $frontend = new AI_Website_Bot_Frontend();
                 <span class="typing-text"><?php echo esc_html($settings['bot_name']); ?> is typing...</span>
             </div>
         </div>
-        </div>
-</div><style>
+    </div>
+</div>
+
+<style>
 :root {
     --ai-bot-primary: <?php echo esc_attr($settings['primary_color']); ?>;
-    --ai-bot-primary-dark: <?php echo esc_attr($this->darken_color($settings['primary_color'], 0.1)); ?>;
-    --ai-bot-primary-light: <?php echo esc_attr($this->lighten_color($settings['primary_color'], 0.9)); ?>;
+    --ai-bot-primary-dark: <?php echo esc_attr($frontend->darken_color($settings['primary_color'], 0.1)); ?>;
+    --ai-bot-primary-light: <?php echo esc_attr($frontend->lighten_color($settings['primary_color'], 0.9)); ?>;
 }
-</style><?php if (!empty($settings['custom_css'])): ?>
+</style>
+
+<?php if (!empty($settings['custom_css'])): ?>
 <style><?php echo wp_strip_all_tags($settings['custom_css']); ?></style>
 <?php endif; ?>
