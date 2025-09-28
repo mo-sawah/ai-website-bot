@@ -91,7 +91,7 @@ class AI_Website_Bot_API_Handler {
         $search_query = new WP_Query(array(
             'post_type' => 'post',
             'post_status' => 'publish',
-            'posts_per_page' => $count * 2, // Get more to filter better results
+            'posts_per_page' => $count * 2,
             's' => $search_term,
             'meta_query' => array(
                 'relation' => 'OR',
@@ -106,7 +106,6 @@ class AI_Website_Bot_API_Handler {
         $posts = $search_query->posts;
         
         if (empty($posts)) {
-            // Fallback: try partial word matching
             $posts = $this->fuzzy_search($search_term, $count);
         }
         
@@ -114,27 +113,32 @@ class AI_Website_Bot_API_Handler {
             return "I couldn't find any articles about '{$search_term}' on our website. Try browsing our recent posts or contact us for specific information.";
         }
         
-        // Score and rank results by relevance
         $scored_posts = $this->score_search_results($posts, $search_term);
-        
-        // Take only the best results
         $top_posts = array_slice($scored_posts, 0, $count);
         
         $response = "Here are the most relevant articles about '{$search_term}':\n\n";
         
-        foreach ($top_posts as $post_data) {
+        foreach ($top_posts as $index => $post_data) {
             $post = $post_data['post'];
             
-            $response .= "**" . esc_html($post->post_title) . "**\n";
-            $response .= "Published: " . date('M j, Y', strtotime($post->post_date)) . "\n";
+            // Add article number for better organization
+            $response .= "**" . ($index + 1) . ". " . esc_html($post->post_title) . "**\n";
+            $response .= "📅 " . date('M j, Y', strtotime($post->post_date)) . "\n";
             
-            // Add excerpt if available
+            // Add excerpt if available with better formatting
             if (!empty($post->post_excerpt)) {
-                $excerpt = wp_trim_words(strip_tags($post->post_excerpt), 20);
-                $response .= $excerpt . "\n";
+                $excerpt = wp_trim_words(strip_tags($post->post_excerpt), 15);
+                $response .= "📝 " . $excerpt . "\n";
             }
             
-            $response .= "[View Article](" . get_permalink($post->ID) . ")\n\n";
+            $response .= "🔗 [Read Full Article](" . get_permalink($post->ID) . ")\n";
+            
+            // Add separator between articles (except for the last one)
+            if ($index < count($top_posts) - 1) {
+                $response .= "\n---\n\n";
+            } else {
+                $response .= "\n";
+            }
         }
         
         return $response;
@@ -245,11 +249,26 @@ class AI_Website_Bot_API_Handler {
             return 'No recent posts found.';
         }
         
-        $response = "Here are our latest posts:\n\n";
-        foreach ($recent_posts as $post) {
-            $response .= "**" . esc_html($post['post_title']) . "**\n";
-            $response .= "Published: " . date('M j, Y', strtotime($post['post_date'])) . "\n";
-            $response .= "[View Article](" . get_permalink($post['ID']) . ")\n\n";
+        $response = "📰 **Latest Articles:**\n\n";
+        
+        foreach ($recent_posts as $index => $post) {
+            $response .= "**" . ($index + 1) . ". " . esc_html($post['post_title']) . "**\n";
+            $response .= "📅 " . date('M j, Y', strtotime($post['post_date'])) . "\n";
+            
+            // Add excerpt if available
+            if (!empty($post['post_excerpt'])) {
+                $excerpt = wp_trim_words(strip_tags($post['post_excerpt']), 15);
+                $response .= "📝 " . $excerpt . "\n";
+            }
+            
+            $response .= "🔗 [Read Article](" . get_permalink($post['ID']) . ")\n";
+            
+            // Add separator
+            if ($index < count($recent_posts) - 1) {
+                $response .= "\n---\n\n";
+            } else {
+                $response .= "\n";
+            }
         }
         
         return $response;
@@ -267,11 +286,26 @@ class AI_Website_Bot_API_Handler {
             return 'No popular content found.';
         }
         
-        $response = "Here's our most popular content:\n\n";
-        foreach ($popular_posts as $post) {
-            $response .= "**" . esc_html($post->post_title) . "**\n";
-            $response .= "Published: " . date('M j, Y', strtotime($post->post_date)) . "\n";
-            $response .= "[View Article](" . get_permalink($post->ID) . ")\n\n";
+        $response = "🔥 **Most Popular Articles:**\n\n";
+        
+        foreach ($popular_posts as $index => $post) {
+            $response .= "**" . ($index + 1) . ". " . esc_html($post->post_title) . "**\n";
+            $response .= "📅 " . date('M j, Y', strtotime($post->post_date)) . "\n";
+            
+            // Add comment count for popular posts
+            $comment_count = get_comments_number($post->ID);
+            if ($comment_count > 0) {
+                $response .= "💬 " . $comment_count . " comment" . ($comment_count != 1 ? 's' : '') . "\n";
+            }
+            
+            $response .= "🔗 [Read Article](" . get_permalink($post->ID) . ")\n";
+            
+            // Add separator
+            if ($index < count($popular_posts) - 1) {
+                $response .= "\n---\n\n";
+            } else {
+                $response .= "\n";
+            }
         }
         
         return $response;

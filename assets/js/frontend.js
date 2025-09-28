@@ -287,6 +287,12 @@
       // Basic formatting
       text = text.replace(/\n/g, "<br>");
 
+      // Handle horizontal rules for separation
+      text = text.replace(
+        /---/g,
+        '<hr style="border: none; border-top: 1px solid var(--aiwb-border); margin: 12px 0; opacity: 0.3;">'
+      );
+
       // Handle bold text
       text = text.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
       text = text.replace(/\*(.*?)\*/g, "<em>$1</em>");
@@ -294,19 +300,18 @@
       // Handle markdown-style links [text](url)
       text = text.replace(
         /\[([^\]]+)\]\(([^)]+)\)/g,
-        '<a href="$2" target="_blank" rel="noopener">$1</a>'
+        '<a href="$2" target="_blank" rel="noopener" style="color: var(--aiwb-primary); text-decoration: none; font-weight: 500;">$1 →</a>'
       );
 
       // Make plain URLs clickable (if they're not already in markdown format)
       const urlRegex = /(https?:\/\/[^\s<>]+)(?![^<]*>|[^<>]*<\/a>)/g;
       text = text.replace(
         urlRegex,
-        '<a href="$1" target="_blank" rel="noopener">$1</a>'
+        '<a href="$1" target="_blank" rel="noopener" style="color: var(--aiwb-primary); text-decoration: none;">$1</a>'
       );
 
-      // Clean up extra <br> tags
-      text = text.replace(/<br>\s*<br>\s*(<a\s)/g, "<br>$1");
-      text = text.replace(/(<\/a>)\s*<br>\s*<br>/g, "$1<br>");
+      // Add some spacing for better readability
+      text = text.replace(/<br><br>/g, '<br><div style="height: 4px;"></div>');
 
       return text;
     }

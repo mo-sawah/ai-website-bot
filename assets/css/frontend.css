@@ -756,3 +756,22 @@
   font-size: 24px !important;
   color: white !important;
 }
+
+.aiwb-message-text hr {
+  border: none !important;
+  border-top: 1px solid var(--aiwb-border) !important;
+  margin: 12px 0 !important;
+  opacity: 0.3 !important;
+}
+
+.aiwb-message-text a {
+  color: var(--aiwb-primary) !important;
+  text-decoration: none !important;
+  font-weight: 500 !important;
+  border-bottom: 1px dotted var(--aiwb-primary) !important;
+}
+
+.aiwb-message-text a:hover {
+  text-decoration: underline !important;
+  border-bottom: 1px solid var(--aiwb-primary) !important;
+}
