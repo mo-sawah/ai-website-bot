@@ -172,7 +172,7 @@ if (!defined('ABSPATH')) {
 
                         <div class="setting-group">
                             <label class="setting-label">Chat Icon</label>
-                            <p class="setting-description">Choose a FontAwesome icon for the chat bubble</p>
+                            <p class="setting-description">Choose an icon for the chat bubble</p>
                             <select name="chat_icon" class="setting-input" onchange="updateIconPreview(this.value)">
                                 <option value="robot" <?php selected($settings['chat_icon'], 'robot'); ?>>🤖 Robot</option>
                                 <option value="chat" <?php selected($settings['chat_icon'], 'chat'); ?>>💬 Chat</option>
@@ -184,7 +184,7 @@ if (!defined('ABSPATH')) {
                                 <option value="message" <?php selected($settings['chat_icon'], 'message'); ?>>📧 Message</option>
                             </select>
                             
-                            <div class="icon-preview" style="margin-top: 10px; font-size: 24px; color: var(--aiwb-primary);">
+                            <div class="icon-preview" style="margin-top: 10px; padding: 10px; background: #f8fafc; border-radius: 6px; border: 1px solid #e2e8f0; display: flex; align-items: center;">
                                 <span id="icon-preview-display"><?php echo $frontend->get_chat_icon_svg($settings['chat_icon']); ?></span>
                                 <span style="margin-left: 10px; font-size: 14px; color: #666;">Preview</span>
                             </div>

@@ -775,3 +775,46 @@
   text-decoration: underline !important;
   border-bottom: 1px solid var(--aiwb-primary) !important;
 }
+
+/* Remove or replace the FontAwesome-specific CSS at the bottom of frontend.css with this: */
+
+/* SVG Icon Styling */
+.aiwb-bubble-icon svg,
+.aiwb-avatar-icon svg,
+.aiwb-message-avatar svg {
+  width: inherit !important;
+  height: inherit !important;
+  fill: currentColor !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+.aiwb-bubble-icon {
+  width: 28px !important;
+  height: 28px !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.aiwb-avatar-icon {
+  width: 24px !important;
+  height: 24px !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.aiwb-message-avatar {
+  font-size: 18px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.aiwb-message-avatar svg {
+  width: 18px !important;
+  height: 18px !important;
+}

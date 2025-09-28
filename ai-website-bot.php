@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AI Website Bot
  * Description: Intelligent AI chatbot for enhanced user engagement and content discovery
- * Version: 1.0.11
+ * Version: 1.0.12
  * Author: Mohamed Sawah
  * Author URI: https://sawahsolutions.com
  * Text Domain: ai-website-bot
@@ -15,7 +15,7 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('AI_WEBSITE_BOT_VERSION', '1.0.11');
+define('AI_WEBSITE_BOT_VERSION', '1.0.12');
 define('AI_WEBSITE_BOT_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('AI_WEBSITE_BOT_PLUGIN_URL', plugin_dir_url(__FILE__));
 
@@ -58,19 +58,11 @@ class AI_Website_Bot {
     
     public function enqueue_frontend_scripts() {
         if (AI_Website_Bot_Settings::get_option('enable_chatbot', true)) {
-            // Enqueue FontAwesome from CDN
-            wp_enqueue_style(
-                'fontawesome', 
-                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css',
-                array(),
-                '7.0.0'
-            );
-            
-            // Enqueue plugin styles with FontAwesome as dependency
+            // No more FontAwesome dependency - just load our CSS and JS
             wp_enqueue_style(
                 'aiwb-frontend', 
                 AI_WEBSITE_BOT_PLUGIN_URL . 'assets/css/frontend.css', 
-                array('fontawesome'), 
+                array(), 
                 AI_WEBSITE_BOT_VERSION
             );
             
@@ -89,21 +81,15 @@ class AI_Website_Bot {
             ));
         }
     }
-    
+
+    // Update the enqueue_admin_scripts method:
     public function enqueue_admin_scripts($hook) {
         if ($hook === 'toplevel_page_ai-website-bot') {
-            // Enqueue FontAwesome for admin
-            wp_enqueue_style(
-                'fontawesome', 
-                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css',
-                array(),
-                '7.0.0'
-            );
-            
+            // No more FontAwesome dependency for admin either
             wp_enqueue_style(
                 'aiwb-admin', 
                 AI_WEBSITE_BOT_PLUGIN_URL . 'assets/css/admin.css', 
-                array('fontawesome'), 
+                array(), 
                 AI_WEBSITE_BOT_VERSION
             );
             
