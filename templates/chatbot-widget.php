@@ -89,6 +89,18 @@ $is_article_page = is_single() && get_post_type() === 'post';
                         </svg>
                         Popular
                     </button>
+                    <button class="aiwb-action-btn aiwb-primary" data-action="Search Help">
+                        <svg class="aiwb-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z"/>
+                        </svg>
+                        Search
+                    </button>
+                    <button class="aiwb-action-btn aiwb-primary" data-action="Contact Info">
+                        <svg class="aiwb-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M22,4C22,2.89 21.1,2 20,2H4A2,2 0 0,0 2,4V16A2,2 0 0,0 4,18H18L22,22V4Z"/>
+                        </svg>
+                        Contact
+                    </button>
                 </div>
             </div>
 
@@ -115,7 +127,7 @@ $is_article_page = is_single() && get_post_type() === 'post';
                     </button>
                     <button class="aiwb-action-btn aiwb-context" data-action="Related Articles">
                         <svg class="aiwb-btn-icon" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M13.83,19A4.93,4.93 0 0,0 16.01,15.44C17.17,15.44 18.35,16.62 18.35,17.78A4.93,4.93 0 0,1 14.83,22H5A3,3 0 0,1 2,19C2,16.22 4.07,14.8 5.25,14.8C5.73,13.2 7.21,12 8.99,12A3.99,3.99 0 0,1 12.98,16H13.83V19Z"/>
+                            <path d="M10.59,13.41C11,13.8 11,14.4 10.59,14.81C10.2,15.2 9.6,15.2 9.19,14.81L7.05,12.67L9.19,10.53C9.6,10.12 10.2,10.12 10.59,10.53C11,10.94 11,11.54 10.59,11.95L10.59,13.41M14.41,13.41L14.41,11.95C14,11.54 14,10.94 14.41,10.53C14.8,10.12 15.4,10.12 15.81,10.53L17.95,12.67L15.81,14.81C15.4,15.2 14.8,15.2 14.41,14.81C14,14.4 14,13.8 14.41,13.41M12,20A8,8 0 0,1 4,12A8,8 0 0,1 12,4A8,8 0 0,1 20,12A8,8 0 0,1 12,20M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z"/>
                         </svg>
                         Related
                     </button>

@@ -534,6 +534,8 @@
   margin: 0 !important;
   outline: none !important;
   font-family: inherit !important;
+  height: 30px !important;
+  text-transform: capitalize !important;
 }
 
 .aiwb-action-btn:hover {
@@ -999,4 +1001,71 @@
   text-transform: uppercase !important;
   letter-spacing: 0.5px !important;
   font-weight: 500 !important;
+}
+
+/* Add this to your frontend.css to handle the 4-button layout */
+
+/* Action Buttons Container - Updated for 4 buttons */
+.aiwb-action-buttons {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 6px !important;
+}
+
+/* Ensure buttons fit nicely in 2x2 grid */
+.aiwb-action-btn {
+  background: #f1f5f9 !important;
+  border: 1px solid var(--aiwb-border) !important;
+  border-radius: 16px !important;
+  padding: 8px 10px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: #475569 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  white-space: nowrap !important;
+  position: relative !important;
+  overflow: hidden !important;
+  margin: 0 !important;
+  outline: none !important;
+  font-family: inherit !important;
+  min-height: 32px !important;
+}
+
+/* Button Icons - adjusted for tighter layout */
+.aiwb-btn-icon {
+  width: 11px !important;
+  height: 11px !important;
+  opacity: 0.8 !important;
+  fill: currentColor !important;
+  flex-shrink: 0 !important;
+}
+
+/* Primary buttons (Browse section) */
+.aiwb-action-btn.aiwb-primary .aiwb-btn-icon {
+  opacity: 1 !important;
+}
+
+/* Context buttons (Article section) - keep 3 buttons in a row */
+.aiwb-action-group:has(.aiwb-context) .aiwb-action-buttons {
+  display: flex !important;
+  grid-template-columns: none !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+  .aiwb-action-btn {
+    font-size: 10px !important;
+    padding: 6px 8px !important;
+    min-height: 28px !important;
+  }
+
+  .aiwb-btn-icon {
+    width: 10px !important;
+    height: 10px !important;
+  }
 }

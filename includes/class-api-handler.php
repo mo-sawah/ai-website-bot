@@ -516,12 +516,20 @@ class AI_Website_Bot_API_Handler {
     }
     
     private function get_search_help() {
-        return "I can help you find information on our website! Try asking me about:\n\n" .
-               "• Recent articles and posts\n" .
-               "• Popular content\n" .
-               "• Specific topics you're interested in\n" .
-               "• Contact information\n\n" .
-               "Just type your question and I'll do my best to help!";
+        return "I can help you find information on our website! Here's what you can do:\n\n" .
+            "🔍 **Search Commands:**\n" .
+            "• Type \"search for [topic]\" to find articles\n" .
+            "• Ask \"latest 5 articles about [topic]\"\n" .
+            "• Just mention any topic you're interested in\n\n" .
+            "📱 **Quick Actions:**\n" .
+            "• Recent - Latest posts\n" .
+            "• Popular - Most viewed content\n" .
+            "• Contact - Get in touch with us\n\n" .
+            "💡 **Tips:**\n" .
+            "• Be specific with search terms\n" .
+            "• Try different keywords if no results\n" .
+            "• Ask for summaries of articles you find\n\n" .
+            "What would you like to search for?";
     }
     
     private function build_system_prompt($settings, $page_context = null) {
